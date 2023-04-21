@@ -3,7 +3,7 @@ A = 1; % Amplitud de la señal mensaje
 
 fc = 20000;
 fm =1000;
-fs = 10000000;  
+fs = 10000000;
 t=1;
 lX = [0.0 0.001];
 
@@ -23,8 +23,24 @@ pam_gate = zeros(1,length(n));
 for i =1:length(ind)
     pam_gate(ind(i):ind(i)+on_samp) = m(ind(i));
 end
-figure("Name","Modulación Instantanea")
-subplot(3,1,1);
+
+
+% Cálculo de la fourier de la señal sinusoidal
+fr_m = fft(m); % Fourier de Sinoudal, con frecuencia de señal = fm; 
+N = length(fr_m);
+fr_m_f = (-N/2:N/2-1)/(N*1 / 1); 
+fr_m_f_s = fftshift(fr_m_f);
+
+%Calculo de fourier de la señal PAM instantanea
+pam_flat = m.*s;
+fr_flat = fft(pam_flat);
+N = length(fr_flat);
+
+% z = (0:length(fourier_sinoudal) - 1) * fs/length(fourier_sinoudal);
+
+%{
+figure("Name","Modulación Instantanea");
+subplot(4,1,1);
 plot(n,s);
 title("Señal Transportadora");
 xlabel("Tiempo");
@@ -32,7 +48,7 @@ ylabel("Amplitud");
 ylim([-0.2 1.2]);
 xlim(lX);
 
-subplot(3,1,2);
+subplot(4,1,2);
 plot(n,m);
 title("Señal Moduladora");
 xlabel("Tiempo");
@@ -40,19 +56,26 @@ ylabel("Amplitud");
 ylim([-1.2 1.2]);
 xlim(lX);
 
-subplot(3,1,3);
-plot(n,pam_gate);
-title("Señal Modulada");
-xlabel("Tiempo");
-ylabel("Amplitud");
-ylim([-1.2 1.2]);
-xlim(lX);
+%}
 
-%_______________________________
+
+
+subplot(3,1,1);
+stem(fr_m_f_s, abs(fr_m))
+title("Fourier de sinusoidal");
+xlabel("Frecuencia");
+% ylabel("Amplitud");
 figure("Name","Modulación Natural");
 
-pam_flat = m.*s;
 
+
+subplot(3,1,2);
+plot(n,pam_flat);
+title("Fourier de PAM instantanea");
+xlabel("Frecuencia");
+
+
+%{
 subplot(3,1,1);
 plot(n,s);
 title("Señal Transportadora");
@@ -76,6 +99,4 @@ xlabel("Tiempo");
 ylabel("Amplitud");
 ylim([-1.2 1.2]);
 xlim(lX);
-
-
-
+%}
